@@ -19,7 +19,7 @@ http.createServer(function(req, res) {
     pres.on('end', function() {
       preq.end();
       res.end();
-    })
+    });
   });
   req.on('data', function(chunk) {
     preq.write(chunk, 'binary');
