@@ -49,18 +49,29 @@ function benchmark_run(q, pull_size, insert_size, total_size)
 function benchmark_method(m)
 {
   var maxsize = 100000;
-  benchmark_run(m.createQueue(), 1, 10, maxsize);
-  benchmark_run(m.createQueue(), 10, 10, maxsize);
-  benchmark_run(m.createQueue(), 10, 1000, maxsize);
-  benchmark_run(m.createQueue(), 10, 1, maxsize);
-  benchmark_run(m.createQueue(), 100, 1, maxsize);
+  var start = process.memoryUsage();
+  var q = m.createQueue();
+  benchmark_run(q, 1, 10, maxsize);
+  q.clear();
+  benchmark_run(q, 10, 10, maxsize);
+  q.clear();
+  benchmark_run(q, 10, 1000, maxsize);
+  q.clear();
+  benchmark_run(q, 10, 1, maxsize);
+  q.clear();
+  benchmark_run(q, 100, 1, maxsize);
+  q.clear();
+  var end = process.memoryUsage();
+  delete q;
+  return [start, end];
 }
 
 for (k in queues) {
   var m = queues[k];
   var start = Date.now();
-  benchmark_method(m);
+  mem = benchmark_method(m);
   var end = Date.now();
   delete q;
-  console.log(k, "took", end-start, 'ms');
+  console.log(k, "took", end-start, 'ms', 'heapdiff:', mem[0].heapUsed - mem[1].heapUsed);
+  console.log()
 }

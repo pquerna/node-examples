@@ -10,6 +10,13 @@ function ArrayOffsetQueue()
   this.tail = [];
 }
 
+ArrayOffsetQueue.prototype.clear = function()
+{
+  this.offset = 0;
+  this.head = [];
+  this.tail = [];
+}
+
 ArrayOffsetQueue.prototype.insert = function(value)
 {
   this.tail.push(value);

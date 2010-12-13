@@ -8,6 +8,11 @@ function ArrayQueue()
   this.q = [];
 }
 
+ArrayQueue.prototype.clear = function()
+{
+  this.q = [];
+}
+
 ArrayQueue.prototype.insert = function(value)
 {
   this.q.push(value);
