@@ -5,7 +5,6 @@
 
 var dgram = require('dgram');
 var slog = require('sys').log;
-var path = require('path');
 var fs = require('fs');
 
 var SERVER_HOST='127.0.0.1';
@@ -155,12 +154,12 @@ sock = dgram.createSocket("udp4", function (msg, peer) {
       var mode = tmp[1];
       log(peer, "requested file: "+ filename);
       log(peer, "mode: "+ mode);
-      path.exists(filename, function (exists) {
-        if (exists) {
+      fs.stat(filename, function (err, stats) {
+        if (!err && stats.isFile()) {
           startSession(peer, filename);
         }
         else {
-          sendError(peer, ERR_FILE_NOT_FOUND, "no such file: "+ filename);
+          sendError(peer, ERR_FILE_NOT_FOUND, "not a file: "+ filename);
         }
       });
       break;
