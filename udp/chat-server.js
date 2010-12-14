@@ -16,6 +16,7 @@ function ts() {
 }
 
 var clients = {};
+var httpclients = [];
 var generation = ts();
 var sock = null;
 
@@ -46,7 +47,23 @@ function broadcast(buf) {
       sock.send(buf, 0, buf.length, port, host);
     }
   }
-  log('Broadcasted to '+ c + ' clients');
+  log('Broadcasted to '+ c + ' UDP clients');
+
+  var dead = [];
+  for (var i = 0; i < httpclients.length; i++) {
+    if (httpclients[i].connection.writable) {
+      httpclients[i].write(buf);
+    }
+    else {
+      dead.push(httpclients[i]);
+    }
+  }
+
+  httpclients = httpclients.filter(function(r) {
+    return dead.indexOf(r) === -1;
+  });
+
+  log('Broadcasted to '+ httpclients.length + ' HTTP clients');
 }
 
 function processMsg(msg, peer) {
@@ -60,7 +77,6 @@ function processMsg(msg, peer) {
 
 sock = dgram.createSocket("udp4", function (msg, peer) {
   var key = peer.address + ":" + peer.port;
-  log('got message');
   updateTimeout(key);
   processMsg(msg, peer);
 });
@@ -70,3 +86,12 @@ sock.on('listening', function() {
 });
 sock.bind(SERVER_PORT, SERVER_HOST);
 
+
+var http = require('http');
+http.createServer(function (request, response) {
+  response.writeHead(200, {'Content-Type': 'text/plain'});
+  request.on('end', function() {
+    console.log('cleaning up http client connection');
+  });
+  httpclients.push(response);
+}).listen(SERVER_PORT, SERVER_HOST);
