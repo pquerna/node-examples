@@ -10,5 +10,5 @@ var sock = dgram.createSocket("udp4");
 
 var buf = new Buffer("hello world");
 
-sock.sendto(buf, 0, buf.length, 8000, "127.0.0.1");
+sock.send(buf, 0, buf.length, 8000, "127.0.0.1");
 sock.close();
