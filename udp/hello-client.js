@@ -4,7 +4,7 @@
  */
 
 var Buffer = require('buffer').Buffer;
-var dgram = require('dgram')
+var dgram = require('dgram');
 
 var sock = dgram.createSocket("udp4");
 

@@ -4,8 +4,8 @@
  */
 
 var Buffer = require('buffer').Buffer;
-var dgram = require('dgram')
-log = require('sys').log
+var dgram = require('dgram');
+var log = require('sys').log;
 
 sock = dgram.createSocket("udp4", function (msg, rinfo) {
   log('got message from '+ rinfo.address +':'+ rinfo.port);
