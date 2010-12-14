@@ -48,13 +48,13 @@ function decodeOp(msg, peer) {
 function clearSession(peer) {
   var key = peer.address + ":" + peer.port;
   delete sessions[key];
-};
+}
 
 function startSession(peer, file) {
   var key = peer.address + ":" + peer.port;
   sessions[key] = {'peer': peer, 'file': file};
   sendBlock(peer, file, 1);
-};
+}
 
 function continueSession(peer, block) {
   var key = peer.address + ":" + peer.port;
@@ -63,9 +63,9 @@ function continueSession(peer, block) {
     sendBlock(peer, s.file, block);
   }
   else {
-    log(peer, 'Ack for unknown session')
+    log(peer, 'Ack for unknown session');
   }
-};
+}
 
 var ERR_UNDEFINED = 0; /* Not defined, see error message (if any). */
 var ERR_FILE_NOT_FOUND = 1; /* File not found. */
@@ -131,6 +131,7 @@ function sendBlock(peer, file, block) {
 sock = dgram.createSocket("udp4", function (msg, peer) {
   var key = peer.address + ":" + peer.port;
   var op = decodeOp(msg, peer);
+  var buf = null;
 
   if (op === null) {
     sendError(peer, ERR_UNDEFINED, 'Unable to decode opcode');
@@ -140,7 +141,7 @@ sock = dgram.createSocket("udp4", function (msg, peer) {
   log(peer, 'OP '+ op);
   switch (op) {
     case "OPCODE_RRQ":
-      var buf = msg.slice(2);
+      buf = msg.slice(2);
       var tmp = getString(buf);
       buf = buf.slice(tmp[0]+1);
 
@@ -165,7 +166,7 @@ sock = dgram.createSocket("udp4", function (msg, peer) {
       sendError(peer, ERR_ACCESS_VIOLATION, 'Read only tftp server');
       break;
     case "OPCODE_ACK":
-      var buf = msg.slice(2);
+      buf = msg.slice(2);
       var block = (parseInt(buf[0]) << 8) +parseInt(buf[1]);
       continueSession(peer, block + 1);
       break;
