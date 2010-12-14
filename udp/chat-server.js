@@ -8,7 +8,7 @@ var dgram = require('dgram');
 var log = require('sys').log;
 var CLIENT_GENERATION_GAP = 10;
 var CLIENT_CLEANER_INTERVAL = 1000;
-SERVER_HOST = '127.0.0.1';
+SERVER_HOST = '0.0.0.0';
 SERVER_PORT = 7000;
 
 function ts() {
@@ -90,8 +90,6 @@ sock.bind(SERVER_PORT, SERVER_HOST);
 var http = require('http');
 http.createServer(function (request, response) {
   response.writeHead(200, {'Content-Type': 'text/plain'});
-  request.on('end', function() {
-    console.log('cleaning up http client connection');
-  });
+  response.write('\n');
   httpclients.push(response);
 }).listen(SERVER_PORT, SERVER_HOST);
